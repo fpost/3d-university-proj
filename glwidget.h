@@ -5,8 +5,12 @@
 
 class GLWidget : public QGLWidget
 {
-    float x, y, z, yrot;
-    float speed = 0.3;
+private:
+    float x;
+    float y;
+    float z;
+    float yrot;
+    float speed = 1.5;
     float rot = 0;
 public:
     explicit GLWidget(QWidget *parent = 0);

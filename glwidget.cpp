@@ -1,5 +1,6 @@
 #include "glwidget.h"
-//#include <GL/glut.h>
+#include <QDebug>
+#include <GL/glut.h>
 //#include "freeglut/include/GL/glut.h"
 #include <QKeyEvent>
 #include <GL/glu.h>
@@ -35,31 +36,76 @@ void GLWidget::paintGL()
     glRotatef(yrot, 0.0f, 1.0f, 0.0f);
     glTranslatef(x, y, z);
     glPushMatrix();
-    glRotatef(rot, 0.0f, 1.0f, 0.0f);
     glBegin(GL_TRIANGLES);
+    //Czworościan bez spodu
         glColor3f(1,0,0);
-        glVertex3f(0.0, 1.0, 0.0);
+        glVertex3f(0.0, -1.0, 0.0);
+        glVertex3f(0.5, -1.0, 0.0);
+        glVertex3f(0.25, 0.5, 0.25);
 
         glColor3f(0,1,0);
-        glVertex3f(1.0, -1.0, 0.0);
+        glVertex3f(0.5, -1.0, 0.0);
+        glVertex3f(0.25, 0.5, 0.25);
+        glVertex3f(0.25, -1.0, 0.5);
 
         glColor3f(0,0,1);
-        glVertex3f(-1.0, -1.0, 0.0);
+        glVertex3f(0.0, -1.0, 0.0);
+        glVertex3f(0.25, 0.5, 0.25);
+        glVertex3f(0.25, -1.0, 0.5);
     glEnd();
     glPopMatrix();
-    glColor3f(1, 1, 0);
+    glColor3f(0.75, 0.75, 0.75);
+
     for (int x = -50;x < 50;x++) {
+        //Te są generowane w x
         glBegin(GL_LINE_LOOP);
         glVertex3f(x, -1, -50);
         glVertex3f(x, -1, 50);
         glEnd();
     }
-    for (int z = -50;z < 50;z++) {
-        glBegin(GL_LINE_LOOP);
-        glVertex3f(-50, -1, z);
-        glVertex3f(50, -1, z);
-        glEnd();
-    }
+
+    glBegin(GL_TRIANGLES);
+        glColor3f(0.5, 0.5, 0);
+        glVertex3f(-50, 10, 50);
+        glVertex3f(50, -1, 50);
+        glVertex3f(-50,-1,50);
+
+        glColor3f(0.5, 0.65, 0.0);
+        glVertex3f(50, 10, 50);
+        glVertex3f(-50, 10, 50);
+        glVertex3f(50,-1,50);
+
+        glColor3f(0.5, 0.2, 0.2);
+        glVertex3f(-50, 10, 50);
+        glVertex3f(-50, -1, 50);
+        glVertex3f(-50,-1, -50);
+
+        glColor3f(0.5, 0.2, 0.25);
+        glVertex3f(-50, 10, 50);
+        glVertex3f(-50, 10, -50);
+        glVertex3f(-50,-1, -50);
+
+        glColor3f(0.5, 0.5, 0.5);
+        glVertex3f(-50, 10, -50);
+        glVertex3f(-50,-1, -50);
+        glVertex3f(50, -1, -50);
+
+        glColor3f(0.6, 0.6, 0.6);
+        glVertex3f(-50, 10, -50);
+        glVertex3f(50, 10, -50);
+        glVertex3f(50, -1, -50);
+
+        glColor3f(0.0, 0.0, 0.6);
+        glVertex3f(50, -1, 50);
+        glVertex3f(50, -1, -50);
+        glVertex3f(50, 10, -50);
+
+        glColor3f(0.0, 0.0, 0.3);
+        glVertex3f(50, -1, 50);
+        glVertex3f(50, 10, 50);
+        glVertex3f(50, 10, -50);
+
+    glEnd();
 }
 
 void GLWidget::resizeGL(int w, int h)
@@ -67,39 +113,48 @@ void GLWidget::resizeGL(int w, int h)
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(65, (float)rect().right() / (float)rect().bottom(), 0.1f, 100.0f);
+    gluPerspective(45.0, (float)w / (float)h, 0.1f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *e)
 {
     float rad;
-    switch (e->key()) {
-    case Qt::Key_W:
+    if(e->key() == Qt::Key_W)
+    {
         rad = (yrot + 90) * 3.141592 / 180;
-        z += speed * sin(rad);
-        x += speed * cos(rad);
-        break;
-    case Qt::Key_S:
+        z = z + speed * sin(rad);
+        x = x + speed * cos(rad);
+    }
+    if(e->key() == Qt::Key_S)
+    {
         rad = (yrot + 90) * 3.141592 / 180;
-        z -= speed * sin(rad);
-        x -= speed * cos(rad);
-        break;
-    case Qt::Key_A:
+        z = z - speed * sin(rad);
+        x = x - speed * cos(rad);
+    }
+    if(e->key() == Qt::Key_A)
+    {
         rad = yrot * 3.141592 / 180;
-        x += speed * cos(rad);
-        z += speed * sin(rad);
-        break;
-    case Qt::Key_D:
+        x = x + speed * cos(rad);
+        z = z + speed * sin(rad);
+    }
+    if(e->key() == Qt::Key_D)
+    {
         rad = yrot * 3.141592 / 180;
-        x -= speed * cos(rad);
-        z -= speed * sin(rad);
-        break;
-    case Qt::Key_Q:
-        yrot -= 2;
-        break;
-    case Qt::Key_E:
-        yrot += 2;
-        break;
+        x = x - speed * cos(rad);
+        z = z - speed * sin(rad);
+    }
+    if(e->key() == Qt::Key_Q)
+    {
+        yrot = yrot - 5;
+    }
+    if(e->key() == Qt::Key_E)
+    {
+        yrot = yrot + 5;
+    }
+
+    if(e->key() == Qt::Key_Escape)
+    {
+        qDebug() << "Wcisnąłeś Esc, ale on jeszcze nic nie robi";
     }
 }
